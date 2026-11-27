@@ -1,0 +1,43 @@
+stages:
+  prepare:
+    cmd: python src/prepare_dataset.py
+    deps:
+      - src/prepare_dataset.py
+      - data/raw_data/raw.csv
+    outs:
+      - data/processed_data/X_train_scaled.csv
+      - data/processed_data/X_test_scaled.csv
+      - data/processed_data/y_train.csv
+      - data/processed_data/y_test.csv
+
+  gridsearch:
+    cmd: python src/gridsearch.py
+    deps:
+      - src/gridsearch.py
+      - data/processed_data/X_train_scaled.csv
+      - data/processed_data/y_train.csv
+    outs:
+      - models/best_params.pkl
+
+  train:
+    cmd: python src/train.py
+    deps:
+      - src/train.py
+      - data/processed_data/X_train_scaled.csv
+      - data/processed_data/y_train.csv
+      - models/best_params.pkl
+    outs:
+      - models/gbr_model.pkl
+
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+      - src/evaluate.py
+      - data/processed_data/X_test_scaled.csv
+      - data/processed_data/y_test.csv
+      - models/gbr_model.pkl
+    outs:
+      - data/predictions.csv
+    metrics:
+      - metrics/scores.json:
+          cache: false
