@@ -20,8 +20,9 @@ if __name__ == "__main__":
         "mae": mean_absolute_error(y_test, y_pred),
         "r2": r2_score(y_test, y_pred),
     }
-    with open("metrics/scores.json", "w") as f:
+    with open("metrics/scores.json", "w", newline="\n") as f:
         json.dump(scores, f, indent=4)
+        f.write("\n")
 
     pd.DataFrame({"y_true": y_test, "y_pred": y_pred}).to_csv("data/predictions.csv", index=False)
     print(scores)
